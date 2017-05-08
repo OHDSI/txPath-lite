@@ -14,13 +14,20 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans:400,600">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css"/>
   </head>
-  <body>
-    <div id="selection">
-          <div ng-app="">
-          <p>Cohort: <input type="text" ng-model="cohort"></p>
-
-          <p>Concept: <input type="text" ng-model="concept"></p>
-    </div>
+  <body ng-app = "myapp" ng-controller="TxPathController">
+    <div id="selection" >
+      <div>
+          <select ng-model="selectedConcept" 
+            ng-options="item.id as item.name for item in concepts">
+            <option value="">Select Concept</option>
+          </select>
+          <select ng-model="selectedCohort" 
+            ng-options="item.id as item.name for item in cohorts">
+            <option value="">Select Cohort</option>
+          </select>
+          <!-- {{selectedCohort}} -->
+          <button ng-click="submitSelect()">Submit</button>
+      </div>
     </div>
 
     </div>
@@ -33,11 +40,11 @@
         </div>
       </div>
     </div>
-    <div id="sidebar">
-      <input type="checkbox" id="togglelegend"> Legend<br/>
-      <div id="legend" style="visibility: hidden;"></div>
+    <!-- <div id="sidebar"> -->
+      <!-- <input type="checkbox" id="togglelegend"> Legend<br/> -->
+      <!-- <div id="legend" style="visibility: hidden;"></div> -->
     </div>
-    <script type="text/javascript" src="assets/js/app.js" charset="utf-8"></script>
+    <script type="text/javascript" src="assets/js/TxPathController.js" charset="utf-8"></script>
     <script type="text/javascript">
       // Hack to make this example display correctly in an iframe on bl.ocks.org
       d3.select(self.frameElement).style("height", "700px");
