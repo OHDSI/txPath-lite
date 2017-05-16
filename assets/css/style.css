@@ -3,14 +3,18 @@ body {
   font-size: 12px;
   font-weight: 400;
   background-color: #fff;
-  width: 960px;
+  /*width: 960px;*/
   height: 700px;
-  margin-top: 10px;
+  margin: 0;
+  /*margin-top: 10px;*/
 }
 
 #main {
   float: left;
   width: 750px;
+  width: 960px;
+  padding-left: 10px;
+  color:black;
 }
 
 #sidebar {
@@ -19,8 +23,9 @@ body {
 }
 
 #sequence {
-  width: 600px;
-  height: 70px;
+  /*width: 900px;*/
+  /*height: 70px;*/
+  font-weight: normal;
 }
 
 #legend {
@@ -34,6 +39,7 @@ body {
 
 #chart {
   position: relative;
+  top: -25px; 
 }
 
 #chart path {
@@ -52,4 +58,110 @@ body {
 
 #percentage {
   font-size: 2.5em;
+}
+
+#selection-header {
+  padding: 20px 10px;
+  margin-bottom: 10px;
+  background: #8CE2C0;
+  box-shadow: 0 5px 5px #888888;
+  height: 25px;
+}
+
+#selection-header h1{
+  font-size:24px;
+  color:white;
+  float:left;
+  margin: 0;
+  margin-top:15px;
+  display: inline-block;
+}
+
+#selection-header h1.lite{
+  color: #11A2B2;
+  /*margin-right:10px;*/
+}
+
+select{
+  border:none;
+  height: 30px;
+  background: #80CEAF;
+  color: white;
+  font-size:16px;
+  position: relative;
+  top:-5px;
+  /*margin-left:10px;*/
+}
+
+
+select#selectedCohort {
+  width: 47%;
+}
+
+select#selectedConcept {
+  width: 47%;
+}
+
+select:focus, button:focus{
+  outline:none;
+}
+
+button {
+  /*margin-left: 10px;*/
+  /*height: 30px;*/
+  background: none;
+  border: none;
+  /*border-radius: 25px;*/
+  color: white;
+  font-size: 28px;
+  font-weight: normal;
+  padding-top:10px;
+}
+
+button:hover{
+  color: #11A2B2;
+}
+
+.headerOptions{
+  position:absolute;
+  right: 0px;
+  top:5px;
+  width: 80%;
+  /*display: inline;*/
+}
+
+.headerTitle{
+  position:absolute;
+  left: 10px;
+  top:0px;
+}
+
+#table1{
+  background-color: #ececec;
+  border: 1px solid white;
+}
+#table1 th{
+  background-color: #11A2B2;
+  color: white;
+  border: 1px solid white;
+}
+/*#table1 tr:nth-child(odd){
+  background-color: #dfdfdf;
+}
+#table1 tr:nth-child(even){
+  background-color: #ececec;
+}*/
+
+#table1 td:nth-child(odd){
+  background-color: #dfdfdf
+}
+#table1 td:nth-child(even){
+  background-color: #ececec;
+  /*max-width: 100px;*/
+}
+
+#l1, #l2, #l3, #l4, #l5, #l6, #l7 {
+  vertical-align: top;
+  border: 1px solid white;
+  width: 100px;
 }

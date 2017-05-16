@@ -8,7 +8,6 @@ angular.module('myapp', [])
             // data: { applicationId: 3 }
         }).success(function (result) {
         $scope.concepts = result;
-        console.log("Heyy");
     });
     // $scope.selectedCohort = null;
     $scope.cohorts = [];
@@ -18,26 +17,68 @@ angular.module('myapp', [])
             // data: { applicationId: 3 }
         }).success(function (result) {
         $scope.cohorts = result;
-        console.log("Heyyyy");
     });
+    // $scope.tableData = [];
     $scope.submitSelect = function() {
-        console.log("Ohhhhh");
-        console.log($scope.selectedCohort, $scope.selectedConcept);
-
-        $.ajax({
-          url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
-          type: 'GET',
-          error: function() {
-            console.log("nope");
-          },
-          success: function(data) {
-            // console.log("initJson" + initJson);
-            var json = buildHierarchy(data.pathways);
-            createVisualization(json);
-        }
-  });
+        if ($scope.selectedCohort != null && $scope.selectedConcept != null){
+          $.ajax({
+            url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            type: 'GET',
+            error: function() {
+              console.log("nope");
+            },
+            success: function(data) {
+              var json = buildHierarchy(data.pathways);
+              createVisualization(json);
+              $scope.td01 = data.pathways[0].drug1ConceptName;
+              console.log([json][0].children);
+              $scope.$apply(function(){
+                $scope.tableData = [json][0].children;
+              });
+              // $scope.$apply(function() {
+              //     console.log("Get ready....");
+              //     $scope.tableData = data.pathways;
+              //     var tempArray = [];
+              //     var tempD = {};
+              //     var tempT = {};
+              //     for (i = 0; i <data.pathways.length; i++){
+              //       // console.log(data.pathways[i]);
+              //       delete data.pathways[i].numEdges;
+              //       // delete data.pathways[i].$$hashKey;
+              //       tempD = angular.toJson(data.pathways[i]);
+              //       // console.log(data.pathways[i]);
+              //       var bin = 0;
+              //       for (j = 0; j<tempArray.length; j++){
+              //         tempT = angular.toJson(tempArray[j]);
+              //         if (tempT==tempD){
+              //           bin = 1;
+              //           // console.log("Match.");
+              //         }
+              //       }
+              //       // console.log("End Bin:", bin);
+              //       if (bin == 0){
+              //         // console.log("Unique Data");
+              //         // console.log(data.pathways[i]);
+              //         tempArray[j]=data.pathways[i];
+              //         // console.log(tempArray.length);
+              //       } else {
+              //         console.log("MATCH!!!!!!!");
+              //       }
+              //       bin = 0;
+              //     }
+              //     $scope.tableData = tempArray;
+              //     console.log("yeah!");
+              //     console.log($scope.tableData.length);
+              // });
+              // console.log($scope.tableData);
+              // console.log(data.pathways);
+            }
+          });
+        } else {
+          alert("Please select a cohort and concept");
+        };
     }
-
+    // console.log($scope.tableData);
     var data = {};
 
 
@@ -52,7 +93,7 @@ angular.module('myapp', [])
 
   // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
   var b = {
-    w: 115, h: 50, s: 3, t: 10
+    w: 115, h: 25, s: 3, t: 10
   };
 
   // Mapping of step names to color.
@@ -202,8 +243,8 @@ angular.module('myapp', [])
   function initializeBreadcrumbTrail() {
     // Add the svg area.
     var trail = d3.select("#sequence").append("svg:svg")
-        .attr("width", width)
-        .attr("height", 50)
+        .attr("width", 1000)
+        .attr("height", 25)
         .attr("id", "trail");
     // Add the label at the end, for the percentage.
     trail.append("svg:text")
@@ -315,13 +356,49 @@ angular.module('myapp', [])
   // for a partition layout. The first column is a sequence of step names, from
   // root to leaf, separated by hyphens. The second column is a count of how 
   // often that sequence occurred.
+
+  function createTable1(json){
+    var jsons = [];
+    var path = "";
+    var size = 0;
+    var parts = [];
+
+    for (var j=0; j<json.length; j++){
+      var obj = json[j];    
+      for (var key in obj){
+        if (obj[key] == null){
+          continue;
+        } else if (isNaN(obj[key])){
+          path+= (obj[key] + "-");
+        } else{
+          size=obj[key];
+        }
+      }
+      path = path.slice(0, -1);
+      jsons[j]=[path,size];
+      // console.log(jsons[j]);
+      path = "";
+      size = 0;
+    }
+
+
+    for (var i = 0; i < jsons.length; i++) {
+      var sequence = jsons[i][0];
+      var size = +jsons[i][1];
+      if (isNaN(size)) { // e.g. if this is a header row
+        continue;
+      }
+      parts[i] = sequence.split("-"); //arrays of sequences
+      }
+    return parts;
+  }
+
+
   function buildHierarchy(json) {
     //takes in account-account-account-service-home, 32
     var jsons = [];
     var path = "";
     var size = 0;
-    // console.log("json");
-    // console.log(json);
 
     for (var j=0; j<json.length; j++){
       var obj = json[j];    
@@ -339,8 +416,6 @@ angular.module('myapp', [])
       path = "";
       size = 0;
     }
-    // console.log(jsons[0]);
-    // console.log(jsons.length);
     var children = [];
     var root = {"name": "root", "children": []};
     for (var i = 0; i < jsons.length; i++) {
