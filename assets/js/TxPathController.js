@@ -4,7 +4,7 @@ angular.module('myapp', [])
     $scope.concepts = [];
     $http({
             method: 'GET',
-            url: 'http://localhost:8080/WebAPI/conceptset'//,
+            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/conceptset'//,
             // data: { applicationId: 3 }
         }).success(function (result) {
         $scope.concepts = result;
@@ -13,7 +13,7 @@ angular.module('myapp', [])
     $scope.cohorts = [];
     $http({
             method: 'GET',
-            url: 'http://localhost:8080/WebAPI/cohortdefinition'//,
+            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/cohortdefinition'//,
             // data: { applicationId: 3 }
         }).success(function (result) {
         $scope.cohorts = result;
@@ -22,7 +22,7 @@ angular.module('myapp', [])
     $scope.submitSelect = function() {
         if ($scope.selectedCohort != null && $scope.selectedConcept != null){
           $.ajax({
-            url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
             type: 'GET',
             error: function() {
               console.log("nope");
