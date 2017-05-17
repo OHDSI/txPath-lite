@@ -4,30 +4,27 @@ angular.module('myapp', [])
     $scope.concepts = [];
     $.ajax({
             type: 'GET',
-            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/conceptset'//,
+            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/conceptset',//,
             // data: { applicationId: 3 }
-        },
-        error: function() {
-          console.log("nope");
-        },
-        success: function (result) {
-          $scope.concepts = result
-        }
-      });
+            error: function() {
+              console.log("nope");
+            },
+            success: function (result) {
+              $scope.concepts = result
+            }
     });
     // $scope.selectedCohort = null;
     $scope.cohorts = [];
     $.ajax({
             type: 'GET',
-            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/cohortdefinition'//,
+            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/cohortdefinition',//,
             // data: { applicationId: 3 }
-        },
-        error: function() {
-          console.log("nope");
-        },
-        success:function (result) {
-          $scope.cohorts = result;
-        }
+            error: function() {
+              console.log("nope");
+            },
+            success:function (result) {
+              $scope.cohorts = result;
+            }
     });
     // $scope.tableData = [];
     $scope.submitSelect = function() {
