@@ -2,21 +2,32 @@ angular.module('myapp', [])
 .controller('TxPathController', function ($scope, $http) {
     // $scope.selectedConcept = null;
     $scope.concepts = [];
-    $http({
-            method: 'GET',
+    $.ajax({
+            type: 'GET',
             url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/conceptset'//,
             // data: { applicationId: 3 }
-        }).success(function (result) {
-        $scope.concepts = result;
+        },
+        error: function() {
+          console.log("nope");
+        },
+        success: function (result) {
+          $scope.concepts = result
+        }
+      });
     });
     // $scope.selectedCohort = null;
     $scope.cohorts = [];
-    $http({
-            method: 'GET',
+    $.ajax({
+            type: 'GET',
             url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/cohortdefinition'//,
             // data: { applicationId: 3 }
-        }).success(function (result) {
-        $scope.cohorts = result;
+        },
+        error: function() {
+          console.log("nope");
+        },
+        success:function (result) {
+          $scope.cohorts = result;
+        }
     });
     // $scope.tableData = [];
     $scope.submitSelect = function() {
