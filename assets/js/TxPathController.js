@@ -1,39 +1,34 @@
 angular.module('myapp', [])
 .controller('TxPathController', function ($scope, $http) {
-    // $scope.selectedConcept = null;
     $scope.concepts = [];
     $.ajax({
+            url: '/WebAPI/conceptset',
             type: 'GET',
-            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/conceptset',//,
-            // data: { applicationId: 3 }
             error: function() {
-              console.log("nope");
+              console.log("noConcept");
             },
             success: function (result) {
               $scope.concepts = result
             }
     });
-    // $scope.selectedCohort = null;
     $scope.cohorts = [];
     $.ajax({
+            url: '/WebAPI/cohortdefinition',
             type: 'GET',
-            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/cohortdefinition',//,
-            // data: { applicationId: 3 }
             error: function() {
-              console.log("nope");
+              console.log("noCohort");
             },
             success:function (result) {
               $scope.cohorts = result;
             }
     });
-    // $scope.tableData = [];
     $scope.submitSelect = function() {
         if ($scope.selectedCohort != null && $scope.selectedConcept != null){
           $.ajax({
-            url: 'ohdsi_v5.i3l.gatech.edu:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
             type: 'GET',
             error: function() {
-              console.log("nope");
+              console.log("noTxPath");
             },
             success: function(data) {
               var json = buildHierarchy(data.pathways);
