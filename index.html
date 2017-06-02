@@ -29,10 +29,11 @@
             <option value="">Select Cohort</option>
           </select>
           <!-- {{selectedCohort}} -->
-          <button id="selectHeaderButton" ng-click="submitSelect()"><i class="fa fa-long-arrow-right fa-1x"></i></button>
+          <button id="selectHeaderButton" ng-click="submitSelect()" ng-class="started ? 'clicked' : 'unclicked'"><i class="fa fa-long-arrow-right fa-1x"></i></button>
         </div>
     </div>
     <div id="main">
+      <div class="spinner" ng-show="loading"><img src="assets/images/spinner.gif" class="spinnerGif"/></div>
       <div id="sequence"></div>
       <div id="chart">
         <div id="explanation" style="visibility: hidden;">
@@ -40,70 +41,13 @@
           of treatments follow this path
         </div>
       </div>
-
-
     </div>
-    <div id="table1">
+    <div id="table1" ng-show="showtable">
+    <h2 class="tableLabel">Treatment Path Sequences</h2>
         <table>
-          <th>Treatment Sequences</th>
-          <!--layer 1-->
-          <tr ng-repeat="t in tableData">
-            <td id="l1">{{t.name}}</td>
-            <td ng-if="t.children">
-              <table class="table table-condensed no-outer-staff">
-                  <!--layer 2-->
-                  <tr ng-repeat="child in t.children">
-                    <td id="l2">{{child.name}}</td>
-                    <td ng-if="child.children">
-                      <table class="table table-condensed no-outer-staff">
-                          <!--layer 3-->
-                          <tr ng-repeat="gchild in child.children">
-                            <td id="l3">{{gchild.name}}</td>
-                            <td ng-if="gchild.children">
-                              <table class="table table-condensed no-outer-staff">
-                                  <!--layer 4-->
-                                  <tr ng-repeat="ggc in gchild.children">
-                                    <td id="l4">{{ggc.name}}</td>
-                                    <td ng-if="ggc.children">
-                                      <table class="table table-condensed no-outer-staff">
-                                          <!--layer 5-->
-                                          <tr ng-repeat="tgc in ggc.children">
-                                            <td id="l5">{{tgc.name}}</td>
-                                            <td ng-if="tgc.children">
-                                              <table class="table table-condensed no-outer-staff">
-                                                  <!--layer 6-->
-                                                  <tr ng-repeat="qgc in tgc.children">
-                                                    <td id="l6">{{qgc.name}}</td>
-                                                    <td ng-if="qgc.children">
-                                                      <table class="table table-condensed no-outer-staff">
-                                                          <!--layer 7-->
-                                                          <tr ng-repeat="pgc in qgc.children">
-                                                            <td id="l7">{{pgc.name}}</td>
-                                                          </tr>
-                                                      </table>
-                                                     </td>
-                                                  </tr>
-                                              </table>
-                                             </td>
-                                          </tr>
-                                      </table>
-                                     </td>
-                                  </tr>
-                              </table>
-                             </td>
-                          </tr>
-                      </table>
-                     </td>
-                  </tr>
-              </table>
-            </td>
-            <!-- <td>{{ t.drug2ConceptName }}</td>
-            <td>{{ t.drug3ConceptName }}</td>
-            <td>{{ t.drug4ConceptName }}</td>
-            <td>{{ t.drug5ConceptName }}</td>
-            <td>{{ t.drug6ConceptName }}</td>
-            <td>{{ t.drug7ConceptName }}</td> -->
-          </tr>
+            <tr ng-repeat="t in tableData | orderBy">
+              <td id="l1">{{t}}</td>
+            </tr>
         </table>
       </div>
 

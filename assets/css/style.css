@@ -39,7 +39,7 @@ body {
 
 #chart {
   position: relative;
-  top: -25px; 
+  top: 0px; 
 }
 
 #chart path {
@@ -61,10 +61,10 @@ body {
 }
 
 #selection-header {
-  padding: 20px 10px;
+  padding: 20px 0;
   margin-bottom: 10px;
   background: #8CE2C0;
-  box-shadow: 0 5px 5px #888888;
+  box-shadow: 0 2px 2px #aaaaaa;
   height: 25px;
 }
 
@@ -90,7 +90,7 @@ select{
   font-size:16px;
   position: relative;
   top:-5px;
-  /*margin-left:10px;*/
+  margin-left:3px;
 }
 
 
@@ -122,46 +122,83 @@ button:hover{
   color: #11A2B2;
 }
 
+#selectHeaderButton.clicked{
+  color: #80CEAF;
+}
+
 .headerOptions{
   position:absolute;
-  right: 0px;
+  right: 2.5vw;
   top:5px;
-  width: 80%;
+  width: 70%;
   /*display: inline;*/
 }
 
 .headerTitle{
   position:absolute;
-  left: 10px;
+  left: 2.5vw;
   top:0px;
 }
 
+h2.tableLabel{
+  color: #11A2B2;
+  font-size: 18px;
+  margin-bottom: 5px;
+  /*margin-left: 10px;*/
+}
+
 #table1{
-  background-color: #ececec;
-  border: 1px solid white;
+  /*background-color: #ececec;*/
+  /*border: 1px solid white;*/
+  position: absolute;
+  top: 675px;
+  width: 90vw;
+  margin-left: 5vw;
+  height: 30vh;
 }
-#table1 th{
-  background-color: #11A2B2;
-  color: white;
-  border: 1px solid white;
+
+#table1 table{
+    margin-bottom: 20px;
 }
-/*#table1 tr:nth-child(odd){
+#table1 table, tbody{
+  width: 90vw;
+}
+
+#table1 table {
+  display: block;
+  height: 28vh;
+  overflow-y: scroll;
+}
+
+#table1 tr {
+  border: 1px solid white;
+  width: 90vw;
+}
+#table1 tr:nth-child(odd){
   background-color: #dfdfdf;
 }
 #table1 tr:nth-child(even){
   background-color: #ececec;
-}*/
-
-#table1 td:nth-child(odd){
-  background-color: #dfdfdf
-}
-#table1 td:nth-child(even){
-  background-color: #ececec;
-  /*max-width: 100px;*/
 }
 
-#l1, #l2, #l3, #l4, #l5, #l6, #l7 {
-  vertical-align: top;
-  border: 1px solid white;
-  width: 100px;
+.spinner {  
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:1000;
+    /*background-color:grey;*/
+    opacity: .8;
+ }
+
+.spinnerGif {
+    position: absolute;
+    width: 300px;
+    height: 250px;
+    left: 50%;
+    top: 50%;
+    margin-left: -150px;
+    margin-top: -125px;  
+    display: block;     
 }

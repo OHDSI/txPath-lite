@@ -1,145 +1,93 @@
 angular.module('myapp', [])
 .controller('TxPathController', function ($scope, $http) {
-    $scope.concepts = [];
+    $scope.started = false;
+    $scope.showtable = false;  
     $.ajax({
-            url: '/WebAPI/conceptset',
+            //url: '/WebAPI/conceptset',
+            url: 'http://localhost:8080/WebAPI/conceptset',
             type: 'GET',
             error: function() {
               console.log("noConcept");
             },
             success: function (result) {
-              $scope.concepts = result
+              $scope.$apply(function(){
+                $scope.concepts = result
+              });
             }
     });
-    $scope.cohorts = [];
     $.ajax({
-            url: '/WebAPI/cohortdefinition',
+            //url: 'WebAPI/cohortdefinition',
+            url: 'http://localhost:8080/WebAPI/cohortdefinition',
             type: 'GET',
             error: function() {
               console.log("noCohort");
             },
             success:function (result) {
-              $scope.cohorts = result;
+              $scope.$apply(function(){
+                $scope.cohorts = result;
+              });
             }
     });
     $scope.submitSelect = function() {
+        $scope.loading = true;
         if ($scope.selectedCohort != null && $scope.selectedConcept != null){
+          $scope.started = true; //temporary, put in other feedback later
           $.ajax({
-            url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            //url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
             type: 'GET',
             error: function() {
               console.log("noTxPath");
             },
             success: function(data) {
               var json = buildHierarchy(data.pathways);
+              $scope.loading = false;
               createVisualization(json);
-              $scope.td01 = data.pathways[0].drug1ConceptName;
-              console.log([json][0].children);
+              $scope.showtable = true;
               $scope.$apply(function(){
-                $scope.tableData = [json][0].children;
+                $scope.tableData = data.sequences;
               });
-              // $scope.$apply(function() {
-              //     console.log("Get ready....");
-              //     $scope.tableData = data.pathways;
-              //     var tempArray = [];
-              //     var tempD = {};
-              //     var tempT = {};
-              //     for (i = 0; i <data.pathways.length; i++){
-              //       // console.log(data.pathways[i]);
-              //       delete data.pathways[i].numEdges;
-              //       // delete data.pathways[i].$$hashKey;
-              //       tempD = angular.toJson(data.pathways[i]);
-              //       // console.log(data.pathways[i]);
-              //       var bin = 0;
-              //       for (j = 0; j<tempArray.length; j++){
-              //         tempT = angular.toJson(tempArray[j]);
-              //         if (tempT==tempD){
-              //           bin = 1;
-              //           // console.log("Match.");
-              //         }
-              //       }
-              //       // console.log("End Bin:", bin);
-              //       if (bin == 0){
-              //         // console.log("Unique Data");
-              //         // console.log(data.pathways[i]);
-              //         tempArray[j]=data.pathways[i];
-              //         // console.log(tempArray.length);
-              //       } else {
-              //         console.log("MATCH!!!!!!!");
-              //       }
-              //       bin = 0;
-              //     }
-              //     $scope.tableData = tempArray;
-              //     console.log("yeah!");
-              //     console.log($scope.tableData.length);
-              // });
-              // console.log($scope.tableData);
-              // console.log(data.pathways);
             }
           });
         } else {
           alert("Please select a cohort and concept");
         };
     }
-    // console.log($scope.tableData);
     var data = {};
+    // D3 Stuff
+    // Dimensions of sunburst.
+    var width = 750;
+    var height = 600;
+    var radius = Math.min(width, height) / 2;
 
+    // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+    var b = {
+      w: 115, h: 25, s: 3, t: 10
+    };
 
+    // Mapping of step names to color.
+    //SUNBURST WORKS WITH MORE/LESS OPTIONS
+    var color = d3.scale.category20();
 
-  
+    // Total size of all segments; we set this later, after loading the data.
+    var totalSize = 0; 
 
-  // D3 Stuff
-  // Dimensions of sunburst.
-  var width = 750;
-  var height = 600;
-  var radius = Math.min(width, height) / 2;
+    var vis = d3.select("#chart").append("svg:svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("svg:g")
+        .attr("id", "container")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-  var b = {
-    w: 115, h: 25, s: 3, t: 10
-  };
+    var partition = d3.layout.partition()
+        .size([2 * Math.PI, radius * radius])
+        .value(function(d) { return d.size; });
 
-  // Mapping of step names to color.
-  //SUNBURST WORKS WITH MORE/LESS OPTIONS
-  var color = d3.scale.category20();
-
-  // Total size of all segments; we set this later, after loading the data.
-  var totalSize = 0; 
-
-  var vis = d3.select("#chart").append("svg:svg")
-      .attr("width", width)
-      .attr("height", height)
-      .append("svg:g")
-      .attr("id", "container")
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-  var partition = d3.layout.partition()
-      .size([2 * Math.PI, radius * radius])
-      .value(function(d) { return d.size; });
-
-  var arc = d3.svg.arc()
-      .startAngle(function(d) { return d.x; })
-      .endAngle(function(d) { return d.x + d.dx; })
-      .innerRadius(function(d) { return Math.sqrt(d.y); })
-      .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
-
-  // Use d3.text and d3.csv.parseRows so that we do not need to have a header
-  // row, and can receive the csv as an array of arrays.
-
-  // d3.csv("assets/data/visit_sequences.csv", function(error, data) {
-  //   if (error) throw error;
-  //   console.log(data); // [{"Hello": "world"}, …]
-  // });
-
-
-  // //works!
-  // d3.json("assets/data/visit_sequences.json", function(dataj) {
-  //   var initJson = dataj.data;
-  //   // console.log("initJson" + initJson);
-  //   console.log("*********JSON*********");
-  //   var json = buildHierarchy(initJson);
-  //   createVisualization(json);
-  // });
+    var arc = d3.svg.arc()
+        .startAngle(function(d) { return d.x; })
+        .endAngle(function(d) { return d.x + d.dx; })
+        .innerRadius(function(d) { return Math.sqrt(d.y); })
+        .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
   // Main function to draw and set up the visualization, once we have the data.
   function createVisualization(json) {
@@ -314,8 +262,6 @@ angular.module('myapp', [])
   }
 
   function drawLegend() {
-
-    // Dimensions of legend item: width, height, spacing, radius of rounded rect.
     var li = {
       w: 75, h: 30, s: 3, r: 3
     };
@@ -355,50 +301,7 @@ angular.module('myapp', [])
     }
   }
 
-  // Take a 2-column CSV and transform it into a hierarchical structure suitable
-  // for a partition layout. The first column is a sequence of step names, from
-  // root to leaf, separated by hyphens. The second column is a count of how 
-  // often that sequence occurred.
-
-  function createTable1(json){
-    var jsons = [];
-    var path = "";
-    var size = 0;
-    var parts = [];
-
-    for (var j=0; j<json.length; j++){
-      var obj = json[j];    
-      for (var key in obj){
-        if (obj[key] == null){
-          continue;
-        } else if (isNaN(obj[key])){
-          path+= (obj[key] + "-");
-        } else{
-          size=obj[key];
-        }
-      }
-      path = path.slice(0, -1);
-      jsons[j]=[path,size];
-      // console.log(jsons[j]);
-      path = "";
-      size = 0;
-    }
-
-
-    for (var i = 0; i < jsons.length; i++) {
-      var sequence = jsons[i][0];
-      var size = +jsons[i][1];
-      if (isNaN(size)) { // e.g. if this is a header row
-        continue;
-      }
-      parts[i] = sequence.split("-"); //arrays of sequences
-      }
-    return parts;
-  }
-
-
   function buildHierarchy(json) {
-    //takes in account-account-account-service-home, 32
     var jsons = [];
     var path = "";
     var size = 0;
