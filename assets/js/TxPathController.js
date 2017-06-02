@@ -3,8 +3,8 @@ angular.module('myapp', [])
     $scope.started = false;
     $scope.showtable = false;  
     $.ajax({
-            //url: '/WebAPI/conceptset',
-            url: 'http://localhost:8080/WebAPI/conceptset',
+            url: '/WebAPI/conceptset',
+            // url: 'http://localhost:8080/WebAPI/conceptset',
             type: 'GET',
             error: function() {
               console.log("noConcept");
@@ -16,8 +16,8 @@ angular.module('myapp', [])
             }
     });
     $.ajax({
-            //url: 'WebAPI/cohortdefinition',
-            url: 'http://localhost:8080/WebAPI/cohortdefinition',
+            url: 'WebAPI/cohortdefinition',
+            // url: 'http://localhost:8080/WebAPI/cohortdefinition',
             type: 'GET',
             error: function() {
               console.log("noCohort");
@@ -33,8 +33,8 @@ angular.module('myapp', [])
         if ($scope.selectedCohort != null && $scope.selectedConcept != null){
           $scope.started = true; //temporary, put in other feedback later
           $.ajax({
-            //url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
-            url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            // url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
             type: 'GET',
             error: function() {
               console.log("noTxPath");
