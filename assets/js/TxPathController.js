@@ -44,8 +44,8 @@ angular.module('myapp', [])
     //     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
     $.ajax({
-            // url: '/WebAPI/conceptset',
-            url: 'http://localhost:8080/WebAPI/conceptset',
+            url: '/WebAPI/conceptset',
+            // url: 'http://localhost:8080/WebAPI/conceptset',
             type: 'GET',
             error: function() {
               console.log("noConcept");
@@ -57,8 +57,8 @@ angular.module('myapp', [])
             }
     });
     $.ajax({
-            // url: 'WebAPI/cohortdefinition',
-            url: 'http://localhost:8080/WebAPI/cohortdefinition',
+            url: 'WebAPI/cohortdefinition',
+            // url: 'http://localhost:8080/WebAPI/cohortdefinition',
             type: 'GET',
             error: function() {
               console.log("noCohort");
