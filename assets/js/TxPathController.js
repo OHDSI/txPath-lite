@@ -2,9 +2,50 @@ angular.module('myapp', [])
 .controller('TxPathController', function ($scope, $http) {
     $scope.started = false;
     $scope.showtable = false;  
+    $scope.firstTime= true;
+
+    var data = {};
+    // var vis = null;
+    
+    // D3 Stuff
+    // Dimensions of sunburst.
+    var width = 650;
+    var height = 500;
+    var radius = Math.min(width, height) / 2;
+
+    // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+    var b = {
+      w: 145, h: 25, s: 2, t: 5
+    };
+
+    // Mapping of step names to color.
+    //SUNBURST WORKS WITH MORE/LESS OPTIONS
+    var color = d3.scale.category20();
+
+    // Total size of all segments; we set this later, after loading the data.
+    $scope.totalSize = 0; 
+    $scope.nodes = {};
+
+    // var vis = d3.select("#chart").append("svg:svg")
+    //     .attr("width", width)
+    //     .attr("height", height)
+    //     .append("svg:g")
+    //     .attr("id", "container")
+    //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    // var partition = d3.layout.partition()
+    //     .size([2 * Math.PI, radius * radius])
+    //     .value(function(d) { return d.size; });
+
+    // var arc = d3.svg.arc()
+    //     .startAngle(function(d) { return d.x; })
+    //     .endAngle(function(d) { return d.x + d.dx; })
+    //     .innerRadius(function(d) { return Math.sqrt(d.y); })
+    //     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+
     $.ajax({
-            url: '/WebAPI/conceptset',
-            // url: 'http://localhost:8080/WebAPI/conceptset',
+            // url: '/WebAPI/conceptset',
+            url: 'http://localhost:8080/WebAPI/conceptset',
             type: 'GET',
             error: function() {
               console.log("noConcept");
@@ -16,8 +57,8 @@ angular.module('myapp', [])
             }
     });
     $.ajax({
-            url: 'WebAPI/cohortdefinition',
-            // url: 'http://localhost:8080/WebAPI/cohortdefinition',
+            // url: 'WebAPI/cohortdefinition',
+            url: 'http://localhost:8080/WebAPI/cohortdefinition',
             type: 'GET',
             error: function() {
               console.log("noCohort");
@@ -30,71 +71,68 @@ angular.module('myapp', [])
     });
     $scope.submitSelect = function() {
         $scope.loading = true;
+        $scope.showTable = false;
+        if ($scope.firstTime == false){
+          console.log("It's not my first time.");
+          data = {};
+          $scope.totalSize=0;
+          d3.selectAll('svg').remove();
+        }
         if ($scope.selectedCohort != null && $scope.selectedConcept != null){
           $scope.started = true; //temporary, put in other feedback later
           $.ajax({
-            url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
-            // url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            // url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
             type: 'GET',
             error: function() {
               console.log("noTxPath");
             },
             success: function(data) {
+              // d3.select("svg").remove();
+              console.log(data);
+              console.log("data-ing");
               var json = buildHierarchy(data.pathways);
               $scope.loading = false;
-              createVisualization(json);
+              $scope.nodes = createVisualization(json);
+              console.log($scope.nodes[0].children);
               $scope.showtable = true;
               $scope.$apply(function(){
-                $scope.tableData = data.sequences;
+                $scope.tableData = $scope.nodes[0].children;
               });
+              $scope.firstTime = false;
             }
           });
         } else {
           alert("Please select a cohort and concept");
         };
     }
-    var data = {};
-    // D3 Stuff
-    // Dimensions of sunburst.
-    var width = 750;
-    var height = 600;
-    var radius = Math.min(width, height) / 2;
-
-    // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-    var b = {
-      w: 115, h: 25, s: 3, t: 10
-    };
-
-    // Mapping of step names to color.
-    //SUNBURST WORKS WITH MORE/LESS OPTIONS
-    var color = d3.scale.category20();
-
-    // Total size of all segments; we set this later, after loading the data.
-    var totalSize = 0; 
-
-    var vis = d3.select("#chart").append("svg:svg")
-        .attr("width", width)
-        .attr("height", height)
-        .append("svg:g")
-        .attr("id", "container")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
-    var partition = d3.layout.partition()
-        .size([2 * Math.PI, radius * radius])
-        .value(function(d) { return d.size; });
-
-    var arc = d3.svg.arc()
-        .startAngle(function(d) { return d.x; })
-        .endAngle(function(d) { return d.x + d.dx; })
-        .innerRadius(function(d) { return Math.sqrt(d.y); })
-        .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+    
 
   // Main function to draw and set up the visualization, once we have the data.
   function createVisualization(json) {
-
     // Basic setup of page elements.
+    // if ($scope.firstTime != true){
+    //   console.log("It's not my first time.");
+      var vis = d3.select("#chart").append("svg:svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("svg:g")
+            .attr("id", "container")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+      var partition = d3.layout.partition()
+        .size([2 * Math.PI, radius * radius])
+        .value(function(d) { return d.size; });
+
+      var arc = d3.svg.arc()
+          .startAngle(function(d) { return d.x; })
+          .endAngle(function(d) { return d.x + d.dx; })
+          .innerRadius(function(d) { return Math.sqrt(d.y); })
+          .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+    // }
+    
+
     initializeBreadcrumbTrail();
-    drawLegend();
+    // drawLegend();
     d3.select("#togglelegend").on("click", toggleLegend);
 
     // Bounding circle underneath the sunburst, to make it easier to detect
@@ -106,8 +144,9 @@ angular.module('myapp', [])
     //For efficiency, filter nodes to keep only those large enough to see.
     var nodes = partition.nodes(json)
         .filter(function(d) {
-        return (d.dx > 0.001); // 0.005 radians = 0.29 degrees
+        return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
         });
+
 
     var path = vis.data([json]).selectAll("path")
         .data(nodes)
@@ -123,13 +162,15 @@ angular.module('myapp', [])
     d3.select("#container").on("mouseleave", mouseleave);
 
     // Get total size of the tree = value of root node from partition.
-    totalSize = path.node().__data__.value;
+    $scope.totalSize = path.node().__data__.value;
+    return nodes;
+
    };
 
   // Fade all but the current sequence, and show it in the breadcrumb trail.
   function mouseover(d) {
-
-    var percentage = (100 * d.value / totalSize).toPrecision(3);
+    var vis = d3.select("#chart").select("svg");
+    var percentage = (100 * d.value / $scope.totalSize).toPrecision(3);
     var percentageString = percentage + "%";
     if (percentage < 0.1) {
       percentageString = "< 0.1%";
@@ -194,7 +235,7 @@ angular.module('myapp', [])
   function initializeBreadcrumbTrail() {
     // Add the svg area.
     var trail = d3.select("#sequence").append("svg:svg")
-        .attr("width", 1000)
+        .attr("width",1600)
         .attr("height", 25)
         .attr("id", "trail");
     // Add the label at the end, for the percentage.
@@ -228,15 +269,15 @@ angular.module('myapp', [])
     // Add breadcrumb and label for entering nodes.
     var entering = g.enter().append("svg:g");
 
-    entering.append("svg:polygon")
-        .attr("points", breadcrumbPoints)
-        .style("fill", function(d) { return color[d.name]; });
+    // entering.append("svg:polygon")
+    //     .attr("points", breadcrumbPoints)
+    //     .style("fill", function(d) { return color[d.name]; });
 
     entering.append("svg:text")
-        .attr("x", ((b.w + b.t) / 2))
+        .attr("x", ((b.w) / 2))
         .attr("y", b.h / 2)
-        .attr("dy", "0.35em")
-        .attr("text-anchor", "middle")
+        .attr("dy", "0.25em")
+        .attr("text-anchor", "left")
         .text(function(d) { return d.name; });
 
     // Set position for entering and updating nodes.

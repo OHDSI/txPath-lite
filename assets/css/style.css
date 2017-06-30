@@ -25,7 +25,21 @@ body {
 #sequence {
   /*width: 900px;*/
   /*height: 70px;*/
+  /*width: 600px;*/
+  width: 100vw;
   font-weight: normal;
+}
+
+#sequence svg{
+  position: absolute;
+  z-index: 10;
+  background-color: rgba(17,162,178,.2);
+  left: -20px;
+  right: -20px;
+}
+
+#sequence text {
+  max-width: 75px;
 }
 
 #legend {
@@ -33,13 +47,16 @@ body {
 }
 
 #sequence text, #legend text {
-  font-weight: 600;
-  fill: #fff;
+  font-weight: normal;
+  font-size: 9px;
+  fill: #000;
+  max-width: 23px;
+  overflow:hidden;
 }
 
 #chart {
   position: relative;
-  top: 0px; 
+  top: 30px; 
 }
 
 #chart path {
@@ -48,8 +65,8 @@ body {
 
 #explanation {
   position: absolute;
-  top: 260px;
-  left: 305px;
+  top: 210px;
+  left: 255px;
   width: 140px;
   text-align: center;
   color: #666;
@@ -147,7 +164,21 @@ h2.tableLabel{
   /*margin-left: 10px;*/
 }
 
-#table1{
+h3.tableLabel2{
+  margin:0px;
+}
+
+#smallTables{
+  /*background-color: #ececec;*/
+  /*border: 1px solid white;*/
+  position: absolute;
+  top: 95px;
+  right: 5vw;
+  width: 40vw;
+  height: 20vh;
+}
+
+#largeTables{
   /*background-color: #ececec;*/
   /*border: 1px solid white;*/
   position: absolute;
@@ -157,27 +188,38 @@ h2.tableLabel{
   height: 30vh;
 }
 
-#table1 table{
+#smallTables table, #largeTables table{
     margin-bottom: 20px;
 }
-#table1 table, tbody{
+#largeTables table, tbody{
   width: 90vw;
 }
 
-#table1 table {
+#largeTables table {
   display: block;
   height: 28vh;
   overflow-y: scroll;
 }
 
-#table1 tr {
+#smallTables table{
+  display: block;
+  height: 22vh;
+  overflow-y: scroll;
+  width: 40vw;
+}
+
+tr.invis {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display:none;
+}
+
+#smallTables tr.borderRow, #largeTables tr.borderRow {
   border: 1px solid white;
-  width: 90vw;
 }
-#table1 tr:nth-child(odd){
-  background-color: #dfdfdf;
-}
-#table1 tr:nth-child(even){
+
+tr.borderRow{
   background-color: #ececec;
 }
 
