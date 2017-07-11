@@ -81,8 +81,8 @@ angular.module('myapp', [])
         if ($scope.selectedCohort != null && $scope.selectedConcept != null){
           $scope.started = true; //temporary, put in other feedback later
           $.ajax({
-            // url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
-            url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            url: '/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
+            // url: 'http://localhost:8080/WebAPI/mimic/txPathways/' + $scope.selectedCohort + '/' + $scope.selectedConcept,
             type: 'GET',
             error: function() {
               console.log("noTxPath");
