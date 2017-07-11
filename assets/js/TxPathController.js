@@ -57,7 +57,7 @@ angular.module('myapp', [])
             }
     });
     $.ajax({
-            url: 'WebAPI/cohortdefinition',
+            url: '/WebAPI/cohortdefinition',
             // url: 'http://localhost:8080/WebAPI/cohortdefinition',
             type: 'GET',
             error: function() {
